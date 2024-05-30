@@ -1,180 +1,292 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Radio</title>
-<style>
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #f8f9fa; /* Light gray background */
-}
+  <style>
+    /* Global styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background-color: #f0f0f0;
+      color: #212121;
+    }
 
-.container {
-  position: relative;
-  height: 100vh;
-  overflow: auto;
-  padding-bottom: 80px; /* Space for buttons */
-}
+    h4 {
+      color: #212121;
+    }
 
-.button-container {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #343a40; /* Dark gray background for button container */
-  padding: 10px 0;
-  display: flex;
-  justify-content: space-around; /* Adjust button spacing */
-}
+    img {
+      alt: "[Image description]";    }
 
-button, p {
-  margin: 10px;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  background-color: #007bff; /* Blue color for buttons */
-  color: #ffffff; /* White text color for buttons */
-  border-radius: 5px; /* Rounded corners for buttons */
-}
+    body {
+      color: #212121;    }
 
-.novel {
-  font-weight: bold;
-}
+    button, input {
+      display: inline-block;
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+    }
 
-#currentNovel {
-  margin-top: 20px;
-  font-weight: bold;
-  text-align: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
-  color: #ffffff; /* White text color */
-  padding: 10px 0;
-  z-index: 999; /* Ensure it's on top of other elements */
-}
+    button, input {
+      tabindex: 0;
+    }
 
-#waveform {
-  width: 100%;
-  height: 200px;
-  background-color: #eee;
-}
-</style>
+    body {
+      font-size: 16px;
+    }
+
+    body {
+      background-color: #f0f0f0;
+    }
+
+    h4 {
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .container {
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+    }
+
+    input {
+      border-color: #ccc;
+    }
+
+    /* Add subtle animations */
+    button:hover {
+      background-color: #0069d9;
+    }
+
+    input:focus {
+      border-color: #007bff;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
-<div id="currentNovel"></div>
-<div class="container">
-  <div class="novels">
-    <p class="novel" data-src="https://stream.hamropatro.com/8729.mp3">Radio paschimanchal 99.4mhz</p>
-    <p class="novel" data-src="http://stream.zenolive.com/wtuvp08xq1duv.mp3">Ujyaalo ninety radio</p>
-    <p class="novel" data-src="http://onlineradio.websoftitnepal.com/8048/stream.mp3">nepali sanchar radio</p>
-    <p class="novel" data-src="https://radio-broadcast.ekantipur.com/stream.mp3">Radio kantipur</p>
-<p class="novel" data-src="https://stream-43.zeno.fm/xm2babvnephvv">Swadesh FM</p>
-<p class="novel" data-src="http://radio.itechnepal.com:8964/live">Radio annapurna </p>
-<p class="novel" data-src="https://astream.nepalipatro.com.np:8066/index.htmll">Radio malmala</p>
+<tavle>
+<tr>
+ 
+<th>
+  <label for="tagSelect">Select your desired tag:</label>
 
-  </div>
-</div>
-<div id="waveform"></div>
-<div class="button-container">
-  <button id="playPauseBtn">Play</button>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.26/Tone.js"></script>
-<script src="https://unpkg.com/wavesurfer.js"></script>
-<script>
-const novels = document.querySelectorAll('.novel');
-const playPauseBtn = document.getElementById('playPauseBtn');
-const recordBtn = document.getElementById('recordBtn');
-let audioPlayer = null;
-let mediaRecorder = null;
-let isRecording = false;
-let chunks = [];
+</th>
+<th> select library </th>
+</tr>
+</table>
+  <select id="tagSelect">
+<option value =""> select tag </option>
+<option value ="<!DOCTYPE html>"> <!Doctype html> </option>
+<option value ="<html>"> <html> </option>
+<option value ="</html>"></html> </option>
+<option value ="<head>"> <head> </option>
+<option value = "<title>"> <title> </option>
+<option value ="</title>"> </title> </option>
+<option value ="<style>"> <style> </option>
+<option value ="</style>"></style> </option>
+<option value ="<script>"><script> </option>
+<option value ="</script>"> </script> </option>
+<option value ="</head>"></head> </option>
+<option value ="<body>"><body> </option>
 
-novels.forEach(novel => {
-  novel.addEventListener('click', function() {
-    const audioSrc = this.getAttribute('data-src');
-    const novelTitle = this.textContent;
-    if (audioPlayer) {
-      audioPlayer.pause();
-    }
-    audioPlayer = new Audio(audioSrc);
-    audioPlayer.play();
-    document.getElementById('currentNovel').textContent = `Now Playing: ${novelTitle}`;
-    playPauseBtn.textContent = 'Pause';  // Update button text to 'Pause' when playing
-  });
-});
+<option value ="</body>"></body>   </option>
+<option value ="<h1>"><h1> </option>
+<option value ="</h1>"> </h1> </option>
 
-playPauseBtn.addEventListener('click', function() {
-  if (audioPlayer) {
-    if (audioPlayer.paused) {
-      audioPlayer.play();
-      playPauseBtn.textContent = 'Pause';
-    } else {
-      audioPlayer.pause();
-      playPauseBtn.textContent = 'Play';
-    }
-  }
-});
+<option value ="<h2>"> <h2> </option>
+<option value ="</h2>"></h2> </option> 
+<option  value ="<h3>"><h3> </option>
 
-recordBtn.addEventListener('click', function() {
-  if (!isRecording) {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(function(stream) {
-          mediaRecorder = new MediaRecorder(stream);
-          mediaRecorder.start();
-          isRecording = true;
-          recordBtn.textContent = 'Stop Recording';
+<option value ="</h3"></h3> </option>
 
-          mediaRecorder.ondataavailable = function(e) {
-            chunks.push(e.data);
-          };
+<option value ="<h4>"><h4> </option>
+<option value ="</h4"> </h4> </option> 
+<option value ="h5>"><h5> </option> 
+<option value ="</h5>"></h5> </option> 
 
-          mediaRecorder.onstop = function() {
-            const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
-            const audioURL = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = audioURL;
-            link.download = 'recorded_audio.ogg';
-            link.click();
-            chunks = [];
-          };
-        })
-        .catch(function(err) {
-          console.error('Error accessing microphone:', err);
-        });
-    } else {
-      console.error('getUserMedia not supported on your browser!');
-    }
-  } else {
-    mediaRecorder.stop();
-    isRecording = false;
-    recordBtn.textContent = 'Record';
-  }
-});
+<option value ="<h6>"> <h6> </option> 
+<option value ="</h6>"> </h6> </option>
+<option value ="<p>"><p> </option>
+<option value ="</p>"> </p> </option>
+<option value ="<a>"><a> </option>
+<option value ="</a>"> </a> </option>
+<option value ="<div>"><div> </option>
+<option value ="</div>"> </div> </option>
+<option value ="<span>"><span> </option>
+<option value ="</span>"> </span> </option>
+<option value ="<img>"><img> </option>
+<option value ="<ul>"><ul> </option>
+<option value ="</ul>"> </ul> </option>
 
-// Initialize Wavesurfer
-const wavesurfer = WaveSurfer.create({
-  container: '#waveform',
-  waveColor: 'violet',
-  progressColor: 'purple',
-});
+<option value ="<ol>"><ol> </option>
+<option value ="</ol>"></ol> </option>
+<option value ="<li>"><li> </option>
+<option value ="</li>"> </li> </option>
+<option value ="<table>"><table> </option>
+<option value ="</table>"> </table> </option>
+<option value ="<tr>"><tr> </option>
+<option value ="</tr>"> </tr> </option>
+<option value ="<td>"><td> </option>
+<option value ="</td>"> </td> </option>
+<option value ="<form>"><form> </option>
+<option value ="</form>"> </form> </option>
+<option value ="<input>"><input> </option>
+<option value ="<button>"><button> </option>
+<option value ="</button>"> </button> </option>
+<option value ="<label>"><label> </option>
+<option value ="</label>"> </label> </option>
+<option value="<br>"> <br> </option>
+<option value="<hr>"> <hr> </option>
+<option value="<b>"> <b> </option>
+<option value="</b>"> </b> </option>
+<option value="<i>"> <i> </option>
+<option value="</i>"> </i> </option>
+<option value="<strong>"> <strong> </option>
+<option value="</strong>"> </strong> </option>
+<option value="<em>"> <em> </option>
+<option value="</em>"> </em> </option>
+<option value="<u>"> <u> </option>
+<option value="</u>"> </u> </option>
+<option value="<sub>"> <sub> </option>
+<option value="</sub>"> </sub> </option>
+<option value="<sup>"> <sup> </option>
+<option value="</sup>"> </sup> </option>
+<option value="<abbr>"> <abbr> </option>
+<option value="</abbr>"> </abbr> </option>
+<option value="<acronym>"> <acronym> </option>
+<option value="</acronym>"> </acronym> </option>
+<option value="<nav>"><nav></option>
+<option value="</nav>"></nav></option>
+<option value="<header>"><header></option>
+<option value="</header>"></header></option>
+<option value="<footer>"><footer></option>
+<option value="</footer>"></footer></option>
+<option value="<section>"><section></option>
+<option value="</section>"></section></option>
+<option value="<article>"><article></option>
+<option value="</article>"></article></option>
+<option value="<aside>"><aside></option>
+<option value="</aside>"></aside></option>
+<option value="<main>"><main></option>
+<option value="</main>"></main></option>
+<option value="<script src="">"><script src=""></option>
+<option value="<meta>"><meta></option>
+<option value="<link rel="">"><link rel=""></option>
+<option value="<style type="">"><style type=""></option>
+<option value="<textarea>"><textarea></option>
+<option value="</textarea>"></textarea></option>
+<option value="<select>"><select></option>
+<option value="</select>"></select></option>
+<option value="<option>"><option></option>
+<option value="</option>"></option></option>
+<option value="<optgroup>"><optgroup></option>
+<option value="</optgroup>"></optgroup></option>
+<option value="<fieldset>"><fieldset></option>
+<option value="</fieldset>"></fieldset></option>
+<option value="<legend>"><legend></option>
+<option value="</legend>"></legend></option>
+<option value="<label for="">"><label for=""></option>
+<option value="<input type="">"><input type=""></option>
+<option value="<textarea rows="" cols="">"><textarea rows="" cols=""></option>
+<option value="<button type="">"><button type=""></option>
+<option value="<optgroup>"><optgroup></option>
+<option value="<hr color="">"><hr color=""></option>
+<option value="<img src="" alt="">"><img src="" alt=""></option>
+<option value="<ul type="">"><ul type=""></option>
+<option value="<ol type="">"><ol type=""></option>
+<option value="<dl>"><dl></option>
+<option value="</dl>"></dl></option>
+<option value="<dt>"><dt></option>
+<option value="</dt>"></dt></option>
+<option value="<dd>"><dd></option>
+<option value="</dd>"></dd></option>
+<option value="<cite>"><cite></option>
+<option value="</cite>"></cite></option>
+<option value="<code>"><code></option>
+<option value="</code>"></code></option>
+<option value="<pre>"><pre></option>
+<option value="</pre>"></pre></option>
+<option value="<blockquote>"><blockquote></option>
+<option value="</blockquote>"></blockquote></option>
+<option value="<q>"><q></option>
+<option value="</q>"></q></option>
+<option value="<del>"><del></option>
+<option value="</del>"></del></option>
+<option value="<ins>"><ins></option>
+<option value="</ins>"></ins></option>
+<option value="<dfn>"><dfn></option>
+<option value="</dfn>"></dfn></option>
+<option value="<kbd>"><kbd></option>
+<option value="</kbd>"></kbd></option>
+<option value="<samp>"><samp></option>
+<option value="</samp>"></samp></option>
+<option value="<var>"><var></option>
+<option value="</var>"></var></option>
+<option value="<mark>"><mark></option>
+<option value="</mark>"></mark></option>
+<option value="<time datetime="">"><time datetime=""></option>
+<option value="<ruby>"><ruby></option>
+<option value="</ruby>"></ruby></option>
+<option value="<rt>"><rt></option>
+<option value="</rt>"></rt></option>
+<option value="<rp>"><rp></option>
+<option value="</rp>"></rp></option>
+<option value="<bdo>"><bdo></option>
+<option value="</bdo>"></bdo></option>
+<option value="<map>"><map></option>
+<option value="</map>"></map></option>
+<option value="<area shape="" coords="" href="" alt="">"><area shape="" coords="" href="" alt=""></option>
+<option value="<details>"><details></option>
+<option value="</details>"></details></option>
+<option value="<summary>"><summary></option>
+<option value="</summary>"></summary></option>
+<option value="<meter>"><meter></option>
+<option value="</meter>"></meter></option>
+<option value="<progress>"><progress></option>
+<option value="</progress>"></progress></option>
+<option value="<output>"><output></option>
+<option value="</output>"></output></option>
+<option value="<canvas>"><canvas></option>
+<option value="</canvas>"></canvas></option>
+<option value="<svg>"><svg></option>
+<option value="</svg>"></svg></option>
+<option value="<audio>"><audio></option>
+<option value="</audio>"></audio></option>
+<option value="<video>"><video></option>
+<option value="</video>"></video></option>
+<option value="<source src="" type="">"><source src="" type=""></option>
+<option value="<iframe>"><iframe></option>
+<option value="</iframe>"></iframe></option>
+<option value="<embed>"><embed></option>
+<option value="<object>"><object></option>
+<option value="</object>"></object></option>
+<option value="<param>"><param></option>
 
-// Start visualizing when audio starts playing
-audioPlayer.addEventListener('play', function() {
-  wavesurfer.load(audioPlayer.src);
-  wavesurfer.play();
-});
+  </select>
 
-// Stop visualization when audio pauses
-audioPlayer.addEventListener('pause', function() {
-  wavesurfer.pause();
-});
-</script>
-</body>
-</html>
+
+<select id="lib">
+<option> select library </option>
+<option value="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"> react </option>"
+<option value ="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"> react-dom </option>
+<option value ="https://cdnjs.cloudflare.com/ajax/libs/vue/3.4.19/vue.cjs.js"> vue </option>
+<option value ="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.2/js/bootstrap.min.js"> twitter-bootstrap </option>
+<option value ="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.min.js"> bootstrap </option>
+<option value="https://cdnjs.cloudflare.com/ajax/libs/create-react-class/15.7.0/create-react-class.min.js"> create-react-class </option>
+<option value="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"> d3 </option>
+<option valu

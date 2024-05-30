@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,9 +58,9 @@ button, p {
     <p class="novel" data-src="http://stream.zenolive.com/wtuvp08xq1duv.mp3">Ujyaalo ninety radio</p>
     <p class="novel" data-src="http://onlineradio.websoftitnepal.com/8048/stream.mp3">nepali sanchar radio</p>
     <p class="novel" data-src="https://radio-broadcast.ekantipur.com/stream.mp3">Radio kantipur</p>
-<p class="novel" data-src="https://stream-43.zeno.fm/xm2babvnephvv">Swadesh FM</p>
-<p class="novel" data-src="http://radio.itechnepal.com:8964/live">Radio annapurna </p>
-<p class="novel" data-src="https://astream.nepalipatro.com.np:8066/index.htmll">Radio malmala</p>
+    <p class="novel" data-src="https://stream-43.zeno.fm/xm2babvnephvv">Swadesh FM</p>
+    <p class="novel" data-src="http://radio.itechnepal.com:8964/live">Radio annapurna </p>
+    <p class="novel" data-src="https://astream.nepalipatro.com.np:8066/index.htmll">Radio malmala</p>
   </div>
 </div>
 <div id="currentNovel"></div>
@@ -103,36 +104,31 @@ playPauseBtn.addEventListener('click', function() {
 });
 
 recordBtn.addEventListener('click', function() {
-  if (!isRecording) {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(function(stream) {
-          mediaRecorder = new MediaRecorder(stream);
-          mediaRecorder.start();
-          isRecording = true;
-          recordBtn.textContent = 'Stop Recording';
+  if (!isRecording && audioPlayer) {
+    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    const source = audioContext.createMediaElementSource(audioPlayer);
+    const destination = audioContext.createMediaStreamDestination();
+    source.connect(destination);
+    source.connect(audioContext.destination);  // Connect to speakers as well
+    mediaRecorder = new MediaRecorder(destination.stream);
+    mediaRecorder.start();
+    isRecording = true;
+    recordBtn.textContent = 'Stop Recording';
 
-          mediaRecorder.ondataavailable = function(e) {
-            chunks.push(e.data);
-          };
+    mediaRecorder.ondataavailable = function(e) {
+      chunks.push(e.data);
+    };
 
-          mediaRecorder.onstop = function() {
-            const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
-            const audioURL = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = audioURL;
-            link.download = 'recorded_audio.ogg';
-            link.click();
-            chunks = [];
-          };
-        })
-        .catch(function(err) {
-          console.error('Error accessing microphone:', err);
-        });
-    } else {
-      console.error('getUserMedia not supported on your browser!');
-    }
-  } else {
+    mediaRecorder.onstop = function() {
+      const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+      const audioURL = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = audioURL;
+      link.download = 'recorded_audio.ogg';
+      link.click();
+      chunks = [];
+    };
+  } else if (isRecording) {
     mediaRecorder.stop();
     isRecording = false;
     recordBtn.textContent = 'Record';

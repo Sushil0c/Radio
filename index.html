@@ -48,26 +48,44 @@ button, p {
 #currentNovel {
   margin-top: 20px;
   font-weight: bold;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  color: #ffffff; /* White text color */
+  padding: 10px 0;
+  z-index: 999; /* Ensure it's on top of other elements */
+}
+
+#waveform {
+  width: 100%;
+  height: 200px;
+  background-color: #eee;
 }
 </style>
 </head>
 <body>
+<div id="currentNovel"></div>
 <div class="container">
   <div class="novels">
     <p class="novel" data-src="https://stream.hamropatro.com/8729.mp3">Radio paschimanchal 99.4mhz</p>
     <p class="novel" data-src="http://stream.zenolive.com/wtuvp08xq1duv.mp3">Ujyaalo ninety radio</p>
     <p class="novel" data-src="http://onlineradio.websoftitnepal.com/8048/stream.mp3">nepali sanchar radio</p>
     <p class="novel" data-src="https://radio-broadcast.ekantipur.com/stream.mp3">Radio kantipur</p>
-    <p class="novel" data-src="https://stream-43.zeno.fm/xm2babvnephvv">Swadesh FM</p>
-    <p class="novel" data-src="http://radio.itechnepal.com:8964/live">Radio annapurna </p>
-    <p class="novel" data-src="https://astream.nepalipatro.com.np:8066/index.htmll">Radio malmala</p>
+<p class="novel" data-src="https://stream-43.zeno.fm/xm2babvnephvv">Swadesh FM</p>
+<p class="novel" data-src="http://radio.itechnepal.com:8964/live">Radio annapurna </p>
+<p class="novel" data-src="https://astream.nepalipatro.com.np:8066/index.htmll">Radio malmala</p>
+
   </div>
 </div>
-<div id="currentNovel"></div>
+<div id="waveform"></div>
 <div class="button-container">
   <button id="playPauseBtn">Play</button>
-  <button id="recordBtn">Record</button>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.26/Tone.js"></script>
+<script src="https://unpkg.com/wavesurfer.js"></script>
 <script>
 const novels = document.querySelectorAll('.novel');
 const playPauseBtn = document.getElementById('playPauseBtn');
@@ -86,7 +104,7 @@ novels.forEach(novel => {
     }
     audioPlayer = new Audio(audioSrc);
     audioPlayer.play();
-    document.getElementById('currentNovel').textContent = novelTitle;
+    document.getElementById('currentNovel').textContent = `Now Playing: ${novelTitle}`;
     playPauseBtn.textContent = 'Pause';  // Update button text to 'Pause' when playing
   });
 });
@@ -104,41 +122,58 @@ playPauseBtn.addEventListener('click', function() {
 });
 
 recordBtn.addEventListener('click', function() {
-  if (!isRecording && audioPlayer) {
-    const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    const source = audioContext.createMediaElementSource(audioPlayer);
-    const destination = audioContext.createMediaStreamDestination();
-    source.connect(destination);
-    source.connect(audioContext.destination);  // Connect to speakers as well
-    mediaRecorder = new MediaRecorder(destination.stream, { mimeType: 'audio/mp3' });
+  if (!isRecording) {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(function(stream) {
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.start();
+          isRecording = true;
+          recordBtn.textContent = 'Stop Recording';
 
-    mediaRecorder.ondataavailable = function(e) {
-      chunks.push(e.data);
-    };
+          mediaRecorder.ondataavailable = function(e) {
+            chunks.push(e.data);
+          };
 
-    mediaRecorder.onstop = function() {
-      const blob = new Blob(chunks, { 'type' : 'audio/mp3' });
-      const audioURL = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = audioURL;
-      link.download = 'recorded_audio.mp3';
-      link.click();
-      chunks = [];
-    };
-
-    mediaRecorder.onerror = function(e) {
-      console.error('Recording error: ', e);
-      alert('An error occurred while recording: ' + e.message);
-    };
-
-    mediaRecorder.start();
-    isRecording = true;
-    recordBtn.textContent = 'Stop Recording';
-  } else if (isRecording) {
+          mediaRecorder.onstop = function() {
+            const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+            const audioURL = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = audioURL;
+            link.download = 'recorded_audio.ogg';
+            link.click();
+            chunks = [];
+          };
+        })
+        .catch(function(err) {
+          console.error('Error accessing microphone:', err);
+        });
+    } else {
+      console.error('getUserMedia not supported on your browser!');
+    }
+  } else {
     mediaRecorder.stop();
     isRecording = false;
     recordBtn.textContent = 'Record';
   }
+});
+
+// Initialize Wavesurfer
+const wavesurfer = WaveSurfer.create({
+  container: '#waveform',
+  waveColor: 'violet',
+  progressColor: 'purple',
+});
+
+// Start visualizing when audio starts playing
+audioPlayer.addEventListener('play', function() {
+  wavesurfer.load(audioPlayer.src);
+  wavesurfer.play();
+});
+
+// Stop visualization when audio pauses
+audioPlayer.addEventListener('pause', function() {
+  wavesurfer.pause();
 });
 </script>
 </body>

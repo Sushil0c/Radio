@@ -110,24 +110,30 @@ recordBtn.addEventListener('click', function() {
     const destination = audioContext.createMediaStreamDestination();
     source.connect(destination);
     source.connect(audioContext.destination);  // Connect to speakers as well
-    mediaRecorder = new MediaRecorder(destination.stream);
-    mediaRecorder.start();
-    isRecording = true;
-    recordBtn.textContent = 'Stop Recording';
+    mediaRecorder = new MediaRecorder(destination.stream, { mimeType: 'audio/mp3' });
 
     mediaRecorder.ondataavailable = function(e) {
       chunks.push(e.data);
     };
 
     mediaRecorder.onstop = function() {
-      const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+      const blob = new Blob(chunks, { 'type' : 'audio/mp3' });
       const audioURL = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = audioURL;
-      link.download = 'recorded_audio.ogg';
+      link.download = 'recorded_audio.mp3';
       link.click();
       chunks = [];
     };
+
+    mediaRecorder.onerror = function(e) {
+      console.error('Recording error: ', e);
+      alert('An error occurred while recording: ' + e.message);
+    };
+
+    mediaRecorder.start();
+    isRecording = true;
+    recordBtn.textContent = 'Stop Recording';
   } else if (isRecording) {
     mediaRecorder.stop();
     isRecording = false;
